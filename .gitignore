@@ -1,0 +1,27 @@
+# Python Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Environment and sensitive keys
+.env
+.env.*
+!.env.example
+
+# Logs and temp files
+*.log
+scratch/
+tmp/
+.pytest_cache/

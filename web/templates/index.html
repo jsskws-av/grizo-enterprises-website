@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon India AI E-Commerce Automation Platform</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- Chart.js for Sales Analytics & Distribution Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Sidebar Navigation (16 Core Modules) -->
+  <aside id="sidebar">
+    <div class="brand-header">
+      <div class="brand-logo">AI</div>
+      <div class="brand-text">
+        <h1>E-Com Agentic OS</h1>
+        <span>Amazon India • A21TJRUUN4KGV</span>
+      </div>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-section-title">Core Operations</li>
+      <li class="nav-item active" data-section="business-overview">
+        <span>📊 Business Overview</span>
+      </li>
+      <li class="nav-item" data-section="approval-centre">
+        <span>🛡️ Approval Centre</span>
+        <span class="nav-badge" id="nav-approval-badge" style="display: none;">0</span>
+      </li>
+      <li class="nav-item" data-section="daily-reports">
+        <span>📋 Daily Reports</span>
+      </li>
+
+      <li class="nav-section-title">Product Intelligence</li>
+      <li class="nav-item" data-section="product-research">
+        <span>🔍 Product Research</span>
+      </li>
+      <li class="nav-item" data-section="product-comparison">
+        <span>⚖️ Product Comparison</span>
+      </li>
+      <li class="nav-item" data-section="profitability-calculator">
+        <span>🧮 Profit Calculator</span>
+      </li>
+      <li class="nav-item" data-section="supplier-management">
+        <span>🏭 Supplier Management</span>
+      </li>
+
+      <li class="nav-section-title">Listing & Marketing</li>
+      <li class="nav-item" data-section="keyword-research">
+        <span>🔑 Keyword Research</span>
+      </li>
+      <li class="nav-item" data-section="image-studio">
+        <span>📸 Image Studio</span>
+      </li>
+      <li class="nav-item" data-section="listing-drafts">
+        <span>📝 Listing Drafts</span>
+      </li>
+
+      <li class="nav-section-title">Operations & Growth</li>
+      <li class="nav-item" data-section="inventory-management">
+        <span>📦 Inventory Control</span>
+      </li>
+      <li class="nav-item" data-section="pricing-recommendations">
+        <span>🏷️ Pricing & Repricing</span>
+      </li>
+      <li class="nav-item" data-section="sales-analytics">
+        <span>📈 Sales Analytics</span>
+      </li>
+
+      <li class="nav-section-title">Governance & System</li>
+      <li class="nav-item" data-section="integration-settings">
+        <span>🔌 SP-API & Settings</span>
+      </li>
+      <li class="nav-item" data-section="agent-activity">
+        <span>🤖 12-Agent Cluster</span>
+      </li>
+      <li class="nav-item" data-section="audit-logs">
+        <span>📜 Audit Logs</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main View Area -->
+  <main id="main-content">
+    <!-- Top Navigation Bar -->
+    <header id="topbar">
+      <div class="topbar-left">
+        <div class="marketplace-pill">
+          <span class="flag-in">IN</span>
+          <span>Amazon India (INR ₹)</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          Timezone: <strong style="color: var(--text-secondary);">Asia/Kolkata (IST)</strong>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Manual Scheduler Triggers -->
+        <button class="btn btn-sm btn-secondary" onclick="triggerSchedulerCycle('MORNING')">☀️ Morning Sync</button>
+        <button class="btn btn-sm btn-secondary" onclick="triggerSchedulerCycle('EVENING')">🌙 Evening Report</button>
+        
+        <!-- Emergency Circuit Breaker Switch -->
+        <button id="btn-emergency-stop" class="btn-emergency-stop" onclick="toggleEmergencyStop()">
+          🛑 EMERGENCY STOP
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Body Container -->
+    <div class="page-container">
+
+      <!-- SECTION 1: BUSINESS OVERVIEW -->
+      <section id="section-business-overview" class="section-view active">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Executive Business Overview</h2>
+            <div class="page-subtitle">Evidence-based reselling dashboard for Amazon.in</div>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="openAddProductModal()">+ Ingest Product Candidate</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Tracked Candidates</div>
+            <div class="kpi-value" id="kpi-total-products">0</div>
+            <div class="kpi-subtext">Catalog opportunities in pipeline</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pending Human Approvals</div>
+            <div class="kpi-value" style="color: var(--accent-warning);" id="kpi-pending-approvals">0</div>
+            <div class="kpi-subtext warning">Requires your explicit sign-off</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Stockout Risk SKUs</div>
+            <div class="kpi-value" style="color: var(--accent-danger);" id="kpi-low-stock">0</div>
+            <div class="kpi-subtext danger">Stock below Reorder Point (ROP)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Average Net Margin</div>
+            <div class="kpi-value" style="color: var(--accent-success);" id="kpi-avg-margin">0.0%</div>
+            <div class="kpi-subtext positive">Net margin after all Amazon fees & GST</div>
+          </div>
+        </div>
+
+        <!-- Latest Executive Briefing Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Daily Intelligence Briefing</h3>
+            <button class="btn btn-sm btn-secondary" onclick="triggerGenerateReport()">Refresh Briefing</button>
+          </div>
+          <pre id="overview-briefing-text" style="white-space: pre-wrap; font-family: inherit; font-size: 0.9rem; color: var(--text-primary); margin: 0; background: rgba(15,23,42,0.6); padding: 1rem; border-radius: 6px;">Loading latest daily briefing...</pre>
+        </div>
+
+        <!-- Top Product Opportunities Table -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Top-Ranked Product Opportunities (Evidence Grounded)</h3>
+            <button class="btn btn-sm btn-secondary" onclick="navigateToSection('product-research')">View All Candidates</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product Candidate</th>
+                  <th>Category</th>
+                  <th>Selling Price</th>
+                  <th>Net Margin %</th>
+                  <th>Weighted Score</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="overview-top-candidates-tbody">
+                <tr><td colspan="7" style="text-align:center;">Loading candidates...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: PRODUCT RESEARCH -->
+      <section id="section-product-research" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Product Discovery & Market Research</h2>
+            <div class="page-subtitle">Track, filter, and evaluate product candidates with strict evidence provenance</div>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button id="btn-go-compare" class="btn btn-secondary" style="display: none;" onclick="runComparisonView()">Compare Selected (0)</button>
+            <button class="btn btn-primary" onclick="openAddProductModal()">+ Add Candidate</button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="card" style="padding: 1rem; margin-bottom: 1rem;">
+          <div class="form-row">
+            <div>
+              <label class="form-label">Search Candidate</label>
+              <input type="text" id="product-search-input" class="form-control" placeholder="Search by title, brand, or ASIN..." oninput="loadProductsTable()">
+            </div>
+            <div>
+              <label class="form-label">Filter Category</label>
+              <select id="product-category-filter" class="form-control" onchange="loadProductsTable()">
+                <option value="">All Categories</option>
+                <option value="Home & Kitchen">Home & Kitchen</option>
+                <option value="Consumer Electronics & Accessories">Consumer Electronics & Accessories</option>
+                <option value="Office Products & Stationery">Office Products & Stationery</option>
+                <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+                <option value="Sports, Fitness & Outdoors">Sports & Outdoors</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Filter Status</label>
+              <select id="product-status-filter" class="form-control" onchange="loadProductsTable()">
+                <option value="">All Statuses</option>
+                <option value="DISCOVERED">DISCOVERED</option>
+                <option value="AWAITING_APPROVAL">AWAITING_APPROVAL</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Table -->
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">Select</th>
+                  <th>Product Title & Identifiers</th>
+                  <th>Category</th>
+                  <th>Selling Price</th>
+                  <th>Net Margin</th>
+                  <th>Score / Gates</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-table-tbody">
+                <tr><td colspan="8" style="text-align:center;">Loading product database...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: PRODUCT COMPARISON -->
+      <section id="section-product-comparison" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Candidate Product Comparison Matrix</h2>
+            <div class="page-subtitle">Side-by-side analysis of demand evidence, fees, margins, and operational complexity</div>
+          </div>
+          <div>
+            <button class="btn btn-secondary" onclick="navigateToSection('product-research')">← Back to Research</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead id="compare-table-thead">
+                <tr><th>Metric</th></tr>
+              </thead>
+              <tbody id="compare-table-tbody">
+                <tr><td>Select at least 2 candidates in Product Research to compare.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: PROFITABILITY CALCULATOR -->
+      <section id="section-profitability-calculator" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Amazon India Profitability & Fee Calculator</h2>
+            <div class="page-subtitle">Deterministic calculator incorporating Referral, Closing, Easy Ship/FBA, and 18% GST rules</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <!-- Inputs Card -->
+          <div class="card">
+            <h3 class="card-title">Product & Procurement Inputs</h3>
+            <div class="form-group">
+              <label class="form-label">Product Category</label>
+              <select id="calc-category" class="form-control" onchange="recalculateLiveCalculator()">
+                <option value="Home & Kitchen">Home & Kitchen (6% - 12.5% referral)</option>
+                <option value="Consumer Electronics & Accessories">Consumer Electronics & Accessories (9% - 13.5%)</option>
+                <option value="Office Products & Stationery">Office Products & Stationery (8% - 11%)</option>
+                <option value="Beauty & Personal Care">Beauty & Personal Care (5.5% - 10%)</option>
+                <option value="Toys & Games">Toys & Games (8.5% - 12%)</option>
+                <option value="General Merchandise (Default)">General Merchandise (10% - 13%)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Selling Price on Amazon (₹)</label>
+                <input type="number" id="calc-selling-price" class="form-control" value="999" step="10" oninput="recalculateLiveCalculator()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Supplier Unit Purchase Price (₹)</label>
+                <input type="number" id="calc-supplier-cost" class="form-control" value="320" step="10" oninput="recalculateLiveCalculator()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Package Weight (Grams)</label>
+                <input type="number" id="calc-weight" class="form-control" value="2100" step="50" oninput="recalculateLiveCalculator()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fulfilment Channel</label>
+                <select id="calc-channel" class="form-control" onchange="recalculateLiveCalculator()">
+                  <option value="EASY_SHIP">Amazon Easy Ship (Recommended)</option>
+                  <option value="FBA">Fulfilment by Amazon (FBA)</option>
+                  <option value="SELF_SHIP">Self Ship (Third-Party Courier)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Shipping Zone</label>
+                <select id="calc-zone" class="form-control" onchange="recalculateLiveCalculator()">
+                  <option value="NATIONAL">National (Conservative Default)</option>
+                  <option value="REGIONAL">Regional (Intra-State)</option>
+                  <option value="LOCAL">Local (Intra-City)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Estimated Ad Spend / Unit (₹)</label>
+                <input type="number" id="calc-ad-cost" class="form-control" value="60" step="5" oninput="recalculateLiveCalculator()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Inbound Freight / Unit (₹)</label>
+                <input type="number" id="calc-inbound" class="form-control" value="35" oninput="recalculateLiveCalculator()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Packaging & Labelling / Unit (₹)</label>
+                <input type="number" id="calc-packaging" class="form-control" value="25" oninput="recalculateLiveCalculator()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Outputs Card -->
+          <div class="card">
+            <h3 class="card-title">Fee Breakdown & Net Profitability</h3>
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Amazon Referral Fee:</span>
+                <strong id="calc-out-referral">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Amazon Closing Fee:</span>
+                <strong id="calc-out-closing">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Weight Handling / Shipping Fee:</span>
+                <strong id="calc-out-weight">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">GST on Amazon Fees (18%):</span>
+                <strong id="calc-out-amazon-gst">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
+                <span style="color: var(--text-secondary);">Net Product GST Payable to Govt:</span>
+                <strong id="calc-out-net-gst">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: var(--text-secondary);">Unit Contribution:</span>
+                <strong id="calc-out-contribution">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-color); font-size: 1.15rem;">
+                <span style="font-weight: 700; color: var(--accent-success);">Net Operating Profit:</span>
+                <strong id="calc-out-net-profit" style="color: var(--accent-success);">₹0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: 0.35rem; font-size: 1.05rem;">
+                <span>Net Profit Margin:</span>
+                <strong id="calc-out-net-margin" style="color: var(--accent-success);">0.0%</strong>
+              </div>
+            </div>
+
+            <!-- Additional Metrics -->
+            <div class="form-row" style="margin-bottom: 1rem;">
+              <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">ROI on Outlay</div>
+                <div id="calc-out-roi" style="font-size: 1.1rem; font-weight: 700;">0.0%</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Break-even Price</div>
+                <div id="calc-out-breakeven" style="font-size: 1.1rem; font-weight: 700;">₹0.00</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 6px;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Max Affordable Ad Cost</div>
+                <div id="calc-out-max-ad" style="font-size: 1.1rem; font-weight: 700;">₹0.00</div>
+              </div>
+            </div>
+
+            <!-- Scenarios -->
+            <div style="display: flex; gap: 1rem; font-size: 0.8rem;">
+              <div style="flex: 1; padding: 0.5rem; background: rgba(16,185,129,0.1); border-radius: 4px;">
+                <strong style="color: var(--accent-success);">Optimistic Scenario:</strong>
+                <div id="calc-out-opt" style="font-weight: 700;">₹0.00</div>
+              </div>
+              <div style="flex: 1; padding: 0.5rem; background: rgba(239,68,68,0.1); border-radius: 4px;">
+                <strong style="color: var(--accent-danger);">Pessimistic Scenario:</strong>
+                <div id="calc-out-pess" style="font-weight: 700;">₹0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9: APPROVAL CENTRE -->
+      <section id="section-approval-centre" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Human-in-the-Loop Approval Centre</h2>
+            <div class="page-subtitle">Mandatory human governance for purchasing, payments, listing publication, and ad budgets</div>
+          </div>
+        </div>
+        <div id="approvals-container">
+          <div class="card" style="text-align: center; color: var(--text-muted);">Loading pending requests...</div>
+        </div>
+      </section>
+
+      <!-- SECTION 10: INVENTORY MANAGEMENT -->
+      <section id="section-inventory-management" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Inventory Control & Replenishment</h2>
+            <div class="page-subtitle">Reorder Point (ROP = Lead Time Demand + Safety Stock) monitoring to prevent stockouts</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>SKU & Product</th>
+                  <th>Current Stock</th>
+                  <th>Available</th>
+                  <th>Daily Velocity</th>
+                  <th>Days of Supply</th>
+                  <th>ROP</th>
+                  <th>Safety Stock</th>
+                  <th>Stockout Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-tbody">
+                <tr><td colspan="9" style="text-align:center;">Loading inventory records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8: LISTING DRAFTS -->
+      <section id="section-listing-drafts" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Listing Drafts & Content Studio</h2>
+            <div class="page-subtitle">Category-compliant titles, 5 benefit-driven bullets, and 249-byte backend search terms</div>
+          </div>
+        </div>
+        <div id="listings-container">
+          <div class="card" style="text-align: center; color: var(--text-muted);">Loading listing drafts...</div>
+        </div>
+      </section>
+
+      <!-- SECTION 13: DAILY REPORTS -->
+      <section id="section-daily-reports" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Daily Business Reports & Briefings</h2>
+            <div class="page-subtitle">Historical archive of 12-point executive briefings, opportunities, and replenishment alerts</div>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="window.location.href='/api/reports/export/csv'">📥 Export Portfolio CSV</button>
+            <button class="btn btn-primary" onclick="triggerGenerateReport()">+ Generate New Briefing</button>
+          </div>
+        </div>
+        <div id="reports-container">
+          <div class="card" style="text-align: center; color: var(--text-muted);">Loading daily reports...</div>
+        </div>
+      </section>
+
+      <!-- SECTION 14: INTEGRATION SETTINGS -->
+      <section id="section-integration-settings" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Integration Settings & Credential Vault</h2>
+            <div class="page-subtitle">Configure Amazon SP-API (India), Gemini AI Studio, and Telegram Bot alert credentials</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <!-- SP-API Status & Setup -->
+          <div class="card">
+            <h3 class="card-title">Amazon Selling Partner API (SP-API)</h3>
+            <div id="integration-spapi-status" style="margin-bottom: 1rem;">Checking status...</div>
+            
+            <div style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; font-size: 0.85rem;">
+              <strong>Amazon.in Credentials:</strong>
+              <div class="form-group" style="margin-top: 0.5rem;">
+                <label class="form-label">LWA App Client ID</label>
+                <input type="text" id="spapi-client-id" class="form-control" placeholder="amzn1.application-oa2-client.xxxx">
+              </div>
+              <div class="form-group">
+                <label class="form-label">LWA Client Secret</label>
+                <input type="password" id="spapi-client-secret" class="form-control" placeholder="••••••••••••••••">
+              </div>
+              <div class="form-group">
+                <label class="form-label">SP-API Refresh Token</label>
+                <textarea id="spapi-refresh-token" class="form-control" rows="2" placeholder="Atzr|IwEBI..."></textarea>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="saveSPAPICredentials()">Save to Encrypted Vault</button>
+            </div>
+          </div>
+
+          <!-- AI & Notifications -->
+          <div class="card">
+            <h3 class="card-title">AI Engine & Notification Hub</h3>
+            <div id="integration-gemini-status" style="margin-bottom: 1rem;">Checking Gemini AI...</div>
+            <div class="form-group">
+              <label class="form-label">Google AI Studio API Key (GEMINI_API_KEY)</label>
+              <input type="password" id="gemini-key-input" class="form-control" placeholder="AIzaSy...">
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="saveGeminiCredentials()">Save Gemini Key</button>
+
+            <h4 style="margin-top: 1.5rem; font-size: 0.95rem; font-weight: 700;">Telegram Alert Dispatcher</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">100% free instant alerts for daily executive briefings and critical low-stock triggers.</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Bot Token</label>
+                <input type="text" id="tg-bot-token" class="form-control" placeholder="123456:ABC-DEF...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Chat ID</label>
+                <input type="text" id="tg-chat-id" class="form-control" placeholder="-100xxxxxxxxx">
+              </div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="saveTelegramCredentials()">Save Telegram Config</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 15: AGENT ACTIVITY CLUSTER -->
+      <section id="section-agent-activity" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">12-Specialized AI Agent Cluster</h2>
+            <div class="page-subtitle">Central orchestration topology coordinating deterministic math and AI assistants</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+          <div class="card" style="margin: 0;">
+            <h4>1. Product Discovery</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Empirical sales estimation using Amazon.in BSR power law models.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>2. Market & Competition</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Review moat audits, saturation indices, and complaint extraction.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>3. Cost & Profitability</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Deterministic Amazon India fee schedules, 18% GST, and break-even math.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>4. Supplier Research</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">IndiaMART/wholesale quotations, MOQs, and verification status.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>5. Risk & Compliance</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Indian Legal Metrology, BIS orders, and Hazmat gate checks.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>6. Keyword Research</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Amazon 249-byte backend search term compliance and intent mapping.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>7. Image Studio</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">1000px+ resolution, pure white BG compliance, and 6-slot graphic concepts.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>8. Listing Creation</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Drafts compliant titles, 5 benefit bullets, and queues human approval.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>9. Inventory Management</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Deterministic ROP = (LeadTime * Demand) + SafetyStock replenishment.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>10. Price Optimisation</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Margin protection floors, anti-price war rules, and approval triggers.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>11. Listing Health</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Buy Box loss monitoring, return velocity, and suppression checks.</p>
+          </div>
+          <div class="card" style="margin: 0;">
+            <h4>12. Daily Reporting</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Executive briefings, CSV exports, and Telegram/Email alerts.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 16: AUDIT LOGS -->
+      <section id="section-audit-logs" class="section-view">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Immutable Audit Trail</h2>
+            <div class="page-subtitle">Verifiable log of every agent action, user approval, and marketplace operation</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp (IST)</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Target Resource</th>
+                  <th>Payload / Details</th>
+                </tr>
+              </thead>
+              <tbody id="audit-logs-tbody">
+                <tr><td colspan="5" style="text-align:center;">Loading audit trail...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL: ADD PRODUCT CANDIDATE -->
+  <div id="add-product-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Ingest Candidate Product</h3>
+        <button class="modal-close" onclick="closeAddProductModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Product Title *</label>
+          <input type="text" id="new-product-title" class="form-control" placeholder="e.g. Stainless Steel Heavy Whisk 30cm">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select id="new-product-category" class="form-control">
+              <option value="Home & Kitchen">Home & Kitchen</option>
+              <option value="Consumer Electronics & Accessories">Consumer Electronics & Accessories</option>
+              <option value="Office Products & Stationery">Office Products & Stationery</option>
+              <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+              <option value="Sports, Fitness & Outdoors">Sports & Outdoors</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Selling Price (₹) *</label>
+            <input type="number" id="new-product-sp" class="form-control" placeholder="e.g. 599">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Competitor / Target ASIN</label>
+            <input type="text" id="new-product-asin" class="form-control" placeholder="e.g. B08N5WRWNW">
+          </div>
+          <div class="form-group">
+            <label class="form-label">BSR Rank</label>
+            <input type="number" id="new-product-bsr" class="form-control" placeholder="e.g. 1200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Package Weight (Grams)</label>
+            <input type="number" id="new-product-weight" class="form-control" value="350">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fulfilment Channel</label>
+            <select id="new-product-channel" class="form-control">
+              <option value="EASY_SHIP">Amazon Easy Ship</option>
+              <option value="FBA">FBA</option>
+            </select>
+          </div>
+        </div>
+        <h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.9rem;">Supplier Quote (Optional)</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Supplier Business Name</label>
+            <input type="text" id="new-product-sup-name" class="form-control" placeholder="e.g. Rajkot Steel Works">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Quoted Unit Cost (₹)</label>
+            <input type="number" id="new-product-sup-price" class="form-control" placeholder="e.g. 180">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddProductModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNewProduct()">Save & Run 12-Agent Pipeline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PRODUCT DETAIL -->
+  <div id="product-detail-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Product Candidate Dossier</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="product-detail-modal-content">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMAGE PLAN -->
+  <div id="image-plan-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Amazon 6-Slot Image Asset Plan</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="image-plan-modal-content">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Modal Script Helpers -->
+  <script>
+    function openAddProductModal() {
+      document.getElementById("add-product-modal").classList.add("active");
+    }
+    function closeAddProductModal() {
+      document.getElementById("add-product-modal").classList.remove("active");
+    }
+    async function submitNewProduct() {
+      const title = document.getElementById("new-product-title").value.trim();
+      const category = document.getElementById("new-product-category").value;
+      const selling_price = parseFloat(document.getElementById("new-product-sp").value);
+      const asin = document.getElementById("new-product-asin").value.trim() || null;
+      const bsr_rank = parseInt(document.getElementById("new-product-bsr").value) || null;
+      const package_weight_grams = parseFloat(document.getElementById("new-product-weight").value) || 350;
+      const fulfilment_channel = document.getElementById("new-product-channel").value;
+      const supplier_name = document.getElementById("new-product-sup-name").value.trim() || null;
+      const supplier_quoted_price = parseFloat(document.getElementById("new-product-sup-price").value) || null;
+
+      if (!title || !selling_price) {
+        alert("Please provide a product title and valid selling price");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title, category, selling_price, asin, bsr_rank, package_weight_grams,
+            fulfilment_channel, supplier_name, supplier_quoted_price
+          })
+        });
+        if (res.ok) {
+          closeAddProductModal();
+          showToast("Candidate created and evaluated through 12 agents!", "success");
+          loadOverviewData();
+          loadProductsTable();
+        } else {
+          const err = await res.json();
+          alert("Error: " + (err.detail || "Failed to create product"));
+        }
+      } catch (err) {
+        alert("Network error: " + err.message);
+      }
+    }
+
+    async function saveSPAPICredentials() {
+      const app_client_id = document.getElementById("spapi-client-id").value.trim();
+      const app_client_secret = document.getElementById("spapi-client-secret").value.trim();
+      const refresh_token = document.getElementById("spapi-refresh-token").value.trim();
+      if (!app_client_id || !app_client_secret) {
+        showToast("Please provide both App Client ID and Secret", "warning");
+        return;
+      }
+      try {
+        const res = await fetch("/api/integrations/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_name: "AMAZON_SP_API",
+            credentials: { app_client_id, app_client_secret, refresh_token },
+            is_sandbox: false
+          })
+        });
+        if (res.ok) {
+          showToast("Amazon SP-API credentials encrypted and stored in vault!", "success");
+          loadIntegrations();
+        }
+      } catch (err) {
+        showToast("Error updating SP-API: " + err.message, "danger");
+      }
+    }
+
+    async function saveGeminiCredentials() {
+      const api_key = document.getElementById("gemini-key-input").value.trim();
+      if (!api_key) return;
+      try {
+        const res = await fetch("/api/integrations/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_name: "GEMINI_API",
+            credentials: { api_key }
+          })
+        });
+        if (res.ok) {
+          showToast("Gemini API key encrypted and saved!", "success");
+          loadIntegrations();
+        }
+      } catch (err) {
+        showToast("Error updating Gemini: " + err.message, "danger");
+      }
+    }
+
+    async function saveTelegramCredentials() {
+      const bot_token = document.getElementById("tg-bot-token").value.trim();
+      const chat_id = document.getElementById("tg-chat-id").value.trim();
+      if (!bot_token || !chat_id) return;
+      try {
+        const res = await fetch("/api/integrations/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_name: "TELEGRAM_BOT",
+            credentials: { bot_token, chat_id }
+          })
+        });
+        if (res.ok) {
+          showToast("Telegram configuration encrypted and saved!", "success");
+          loadIntegrations();
+        }
+      } catch (err) {
+        showToast("Error updating Telegram: " + err.message, "danger");
+      }
+    }
+  </script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
