@@ -25,3 +25,12 @@ __pycache__/
 scratch/
 tmp/
 .pytest_cache/
+.tools/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts

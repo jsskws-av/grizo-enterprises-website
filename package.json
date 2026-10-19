@@ -1,0 +1,11 @@
+{
+  "name": "grizo-enterprises-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Grizo Enterprises - Root workspace with Internal Python Application and Next.js Public Website",
+  "scripts": {
+    "site:dev": "npm --prefix website run dev",
+    "site:build": "npm --prefix website run build",
+    "site:start": "npm --prefix website run start"
+  }
+}

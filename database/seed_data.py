@@ -66,7 +66,7 @@ def seed_database():
                 db.add(cred)
 
         # 3. Seed Realistic Product 1: Cast Iron Skillet (Approved Opportunity Candidate)
-        p1 = db.query(Product).filter(Product.title.like("%Cast Iron%")).first()
+        p1 = db.query(Product).filter(Product.sku == "CI-SKILLET-25CM").first()
         if not p1:
             p1 = Product(
                 asin="B08N5WRWNW",
@@ -322,7 +322,7 @@ def seed_database():
             db.add(app_req1)
 
         # 4. Seed Product 2: High Fragility Glass Bottle (Automatically REJECTED Example)
-        p2 = db.query(Product).filter(Product.title.like("%Glass Oil Dispenser%")).first()
+        p2 = db.query(Product).filter(Product.sku == "GLASS-DISP-500").first()
         if not p2:
             p2 = Product(
                 asin="B09XYZTEST",
